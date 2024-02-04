@@ -105,13 +105,10 @@ const RiskProfileScreen = ({ questions }) => {
       .then((data) => {
         // Handle the parsed JSON response data
         console.log("Response from server:", data);
-
-        // You can perform any additional actions based on the response here
       })
       .catch((error) => {
         // Handle errors, if any
         console.error("Error:", error);
-        // You can handle error responses or other error scenarios here
       });
   };
 
