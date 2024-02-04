@@ -1,0 +1,132 @@
+[
+  {
+    "id": 1,
+    "question": "On a scale of 1 to 5, what is your comfort level in receiving job offers from unknown or less verified sources?",
+    "options": [
+      {
+        "id": 1,
+        "text": "1 - Least Comfortable"
+      },
+      {
+        "id": 2,
+        "text": "2 - Somewhat Comfortable"
+      },
+      {
+        "id": 3,
+        "text": "3 - Neutral"
+      },
+      {
+        "id": 4,
+        "text": "4 - Comfortable"
+      },
+      {
+        "id": 5,
+        "text": "5 - Most Comfortable"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "question": "On a scale of 1 to 5, rate your willingness to engage in conversations with people you do not know for a job opportunity?",
+    "options": [
+      {
+        "id": 6,
+        "text": "1 - Not Willing"
+      },
+      {
+        "id": 7,
+        "text": "2 - Somewhat Willing"
+      },
+      {
+        "id": 8,
+        "text": "3 - Neutral"
+      },
+      {
+        "id": 9,
+        "text": "4 - Willing"
+      },
+      {
+        "id": 10,
+        "text": "5 - Very Willing"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "question": "Assessing the possibility of scams, rate your trust in text messaging platforms for job searching on a scale of 1 to 5.",
+    "options": [
+      {
+        "id": 11,
+        "text": "1 - No Trust"
+      },
+      {
+        "id": 12,
+        "text": "2 - Low Trust"
+      },
+      {
+        "id": 13,
+        "text": "3 - Neutral"
+      },
+      {
+        "id": 14,
+        "text": "4 - Moderate Trust"
+      },
+      {
+        "id": 15,
+        "text": "5 - High Trust"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "question": "On a scale of 1 to 5, how likely are you to investigate further or report a message you suspect to be a scam?",
+    "options": [
+      {
+        "id": 16,
+        "text": "1 - Very Unlikely"
+      },
+      {
+        "id": 17,
+        "text": "2 - Unlikely"
+      },
+      {
+        "id": 18,
+        "text": "3 - Neutral"
+      },
+      {
+        "id": 19,
+        "text": "4 - Likely"
+      },
+      {
+        "id": 20,
+        "text": "5 - Very Likely"
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "question": "Considering the risk of potential scams, what percentage of your savings would you be willing to risk losing in pursuit of a job opportunity? (0, 20, 40, 60, 80)",
+    "options": [
+      {
+        "id": 21,
+        "text": "0 - Not Willing to Risk Savings"
+      },
+      {
+        "id": 22,
+        "text": "20 - Willing to Risk 20%"
+      },
+      {
+        "id": 23,
+        "text": "40 - Willing to Risk 40%"
+      },
+      {
+        "id": 24,
+        "text": "60 - Willing to Risk 60%"
+      },
+      {
+        "id": 25,
+        "text": "80 - Willing to Risk 80%"
+      }
+    ]
+  }
+]

@@ -5,18 +5,18 @@ import {
   TouchableOpacity,
   StyleSheet,
   Linking,
-  SafeAreaView,
   Dimensions,
 } from "react-native";
 
 import { useAppContext } from "../utils/AppContext.js"; // Adjust the path as necessary
-
+import { useNavigation } from "@react-navigation/native";
 const { width } = Dimensions.get("window");
 const dynamicPadding = width * 0.05; // 5% of screen width
 
 const SettingsScreen = () => {
   const [responseType, setResponseType] = useState("manual");
   const { appData } = useAppContext();
+  const navigation = useNavigation();
 
   const RadioButton = ({ selected, onPress, label }) => (
     <TouchableOpacity style={styles.radioButtonContainer} onPress={onPress}>
@@ -36,7 +36,10 @@ const SettingsScreen = () => {
     <View style={styles.container}>
       <View style={styles.settingItem}>
         <Text style={styles.settingText}>Risk Threshold</Text>
-        <TouchableOpacity style={styles.setupButton} onPress={() => {}}>
+        <TouchableOpacity
+          style={styles.setupButton}
+          onPress={() => navigation.navigate("RiskProfile")}
+        >
           <Text style={styles.setupButtonText}>Set up</Text>
         </TouchableOpacity>
       </View>
@@ -63,18 +66,18 @@ const SettingsScreen = () => {
 
       {/* Version and Privacy Policy */}
       <View style={styles.settingItem}>
-        <Text style={styles.settingText}>
-          Version: <Text style={styles.versionText}>v{appData.version}</Text>
-        </Text>
-        <TouchableOpacity
-          style={styles.link}
-          onPress={() => Linking.openURL("http://example.com")}
-        >
-          <Text style={styles.linkText}>Privacy Policy</Text>
-        </TouchableOpacity>
+        <Text style={styles.settingText}>Version:</Text>
+        <Text style={styles.versionText}>v{appData.version}</Text>
       </View>
 
       <View style={styles.divider} />
+
+      <TouchableOpacity
+        style={styles.link}
+        onPress={() => Linking.openURL("http://example.com")}
+      >
+        <Text style={styles.linkText}>Privacy Policy</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -127,6 +130,7 @@ const styles = StyleSheet.create({
   linkText: {
     color: "#0000FF",
     textDecorationLine: "underline",
+    textAlign: "right", // Align text to the right
   },
   responseTypeContainer: {
     flexDirection: "row",
