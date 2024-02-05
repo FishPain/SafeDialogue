@@ -8,11 +8,14 @@ import {
   Dimensions,
 } from "react-native";
 import { RadioButton } from "react-native-paper"; // Import RadioButton from react-native-paper
+import { useNavigation } from "@react-navigation/native";
 
 const { width } = Dimensions.get("window");
 const dynamicPadding = width * 0.05; // 5% of screen width
 
-const RiskProfileScreen = ({ questions }) => {
+export default RiskProfileScreen = ({ questions }) => {
+  const navigation = useNavigation();
+
   // Initialize selectedAnswers with the first choice for each question
   const [selectedAnswers, setSelectedAnswers] = useState(
     questions.map((question) => ({
@@ -92,7 +95,7 @@ const RiskProfileScreen = ({ questions }) => {
       body: JSON.stringify(formattedAnswers),
     };
 
-    // Send a POST request with the formatted answers to the server using fetch
+    /* TODO: Send a POST request with the formatted answers to the server using fetch
     fetch(postUrl, requestOptions)
       .then((response) => {
         // Check if the response status is OK (status code 200)
@@ -110,6 +113,10 @@ const RiskProfileScreen = ({ questions }) => {
         // Handle errors, if any
         console.error("Error:", error);
       });
+    */
+
+    // go back to settings and reset the state to settings
+    navigation.navigate("Settings");
   };
 
   return (
@@ -161,5 +168,3 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 });
-
-export default RiskProfileScreen;

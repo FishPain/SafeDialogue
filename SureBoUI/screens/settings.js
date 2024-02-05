@@ -13,11 +13,11 @@ import { useNavigation } from "@react-navigation/native";
 const { width } = Dimensions.get("window");
 const dynamicPadding = width * 0.05; // 5% of screen width
 
-const SettingsScreen = () => {
+export default SettingsScreen = () => {
   const [responseType, setResponseType] = useState("manual");
   const { appData } = useAppContext();
   const navigation = useNavigation();
-
+  
   const RadioButton = ({ selected, onPress, label }) => (
     <TouchableOpacity style={styles.radioButtonContainer} onPress={onPress}>
       <View
@@ -161,5 +161,3 @@ const styles = StyleSheet.create({
     color: "#000",
   },
 });
-
-export default SettingsScreen;
