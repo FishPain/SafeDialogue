@@ -1,1 +1,1 @@
-run `cd SureBoUI && npm start` to start the development env
+run `cd SafeDialogue && npm start` to start the development env

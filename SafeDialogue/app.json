@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "SureBoUI",
-    "slug": "SureBoUI",
+    "name": "SafeDialogue",
+    "slug": "SafeDialogue",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
