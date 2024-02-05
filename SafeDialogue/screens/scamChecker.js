@@ -10,6 +10,8 @@ import {
   Platform,
 } from "react-native";
 
+import SmsListener from "react-native-android-sms-listener";
+
 const { width } = Dimensions.get("window");
 const dynamicPadding = width * 0.05; // 5% of screen width
 
@@ -18,47 +20,8 @@ export default ScamCheckScreen = () => {
   const [smsContent, setSmsContent] = useState("");
 
   useEffect(() => {
-    if (Platform.OS === "android") {
-      requestSMSPermission();
-    }
+    requestSMSPermission();
   }, []);
-
-  const requestSMSPermission = async () => {
-    const Permissions = require("react-native-permissions");
-    try {
-      const granted = await Permissions.request(
-        Permissions.ANDROID.PERMISSIONS.READ_SMS
-      );
-
-      if (granted === "authorized") {
-        // SMS permission granted, start SMS retrieval
-        startSMSRetrieval();
-      } else {
-        // SMS permission denied, handle accordingly
-        console.warn("SMS permission denied");
-      }
-    } catch (error) {
-      console.error("Error requesting SMS permission:", error);
-    }
-  };
-
-  const startSMSRetrieval = () => {
-    const SmsRetriever = require("react-native-sms-retriever");
-    SmsRetriever.startSmsRetriever()
-      .then((result) => {
-        if (result) {
-          console.log("SMS Retriever started successfully");
-          console.log("SMS Message:", result.message);
-          setSmsContent(result.message);
-          // Process the SMS message as needed (e.g., extract OTP)
-        } else {
-          console.log("SMS Retriever failed to start");
-        }
-      })
-      .catch((error) => {
-        console.error("Error starting SMS Retriever:", error);
-      });
-  };
 
   const dismissKeyboard = () => {
     Keyboard.dismiss();
@@ -83,7 +46,9 @@ export default ScamCheckScreen = () => {
             style={styles.input}
             placeholder="SMS Content"
             multiline
-            onChangeText={(value) => {requestSMSPermission}}
+            onChangeText={(value) => {
+              requestSMSPermission;
+            }}
             value={smsContent}
           />
         )}
@@ -108,3 +73,47 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
 });
+
+const requestSMSPermission = async () => {
+  if (Platform.OS === "android") {
+    // Dynamically import the 'react-native-permissions' module
+    const { check, request, PERMISSIONS, RESULTS } = await import("react-native-permissions");
+
+    // Now, use these imported methods and objects as needed
+    const checkResult = await check(PERMISSIONS.ANDROID.READ_SMS);
+
+    if (checkResult === RESULTS.GRANTED) {
+      console.log("SMS permission already granted");
+      startSMSRetrieval();
+    } else {
+      console.log("Requesting SMS permission");
+      const result = await request(PERMISSIONS.ANDROID.READ_SMS);
+      if (result === RESULTS.GRANTED) {
+        console.log("Permission granted to read SMS");
+        startSMSRetrieval(); // Make sure this function is defined elsewhere in your code
+      } else {
+        console.log("SMS permission denied");
+      }
+    }
+  }
+};
+
+const startSMSRetrieval = () => {
+  try {
+    SmsListener.addListener((message) => {
+      /* message = {
+          originatingAddress: string,
+          body: string,
+          timestamp: number
+        } */
+
+      console.info(message);
+
+      setSmsContent(message.body);
+      startSMSRetrieval.remove();
+    });
+  } catch (error) {
+    console.error("Error starting SMS Retriever:", error);
+    console.log(JSON.stringify(error));
+  }
+};
