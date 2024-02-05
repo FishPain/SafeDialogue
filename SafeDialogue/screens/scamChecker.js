@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   TextInput,
@@ -7,23 +7,64 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   Dimensions,
+  Platform,
 } from "react-native";
+
 const { width } = Dimensions.get("window");
 const dynamicPadding = width * 0.05; // 5% of screen width
+
 export default ScamCheckScreen = () => {
   const [text, setText] = useState("");
+  const [smsContent, setSmsContent] = useState("");
 
-  const handleCheckScam = () => {
-    // Implement your scam checking logic here
-    // You can access the entered text using the 'text' state variable
-    // Example: Check if 'text' contains any known scam phrases or patterns
-    // If it's a scam, show an alert or take appropriate action
-    // Otherwise, proceed with your application logic
+  useEffect(() => {
+    if (Platform.OS === "android") {
+      requestSMSPermission();
+    }
+  }, []);
+
+  const requestSMSPermission = async () => {
+    const Permissions = require("react-native-permissions");
+    try {
+      const granted = await Permissions.request(
+        Permissions.ANDROID.PERMISSIONS.READ_SMS
+      );
+
+      if (granted === "authorized") {
+        // SMS permission granted, start SMS retrieval
+        startSMSRetrieval();
+      } else {
+        // SMS permission denied, handle accordingly
+        console.warn("SMS permission denied");
+      }
+    } catch (error) {
+      console.error("Error requesting SMS permission:", error);
+    }
+  };
+
+  const startSMSRetrieval = () => {
+    const SmsRetriever = require("react-native-sms-retriever");
+    SmsRetriever.startSmsRetriever()
+      .then((result) => {
+        if (result) {
+          console.log("SMS Retriever started successfully");
+          console.log("SMS Message:", result.message);
+          setSmsContent(result.message);
+          // Process the SMS message as needed (e.g., extract OTP)
+        } else {
+          console.log("SMS Retriever failed to start");
+        }
+      })
+      .catch((error) => {
+        console.error("Error starting SMS Retriever:", error);
+      });
   };
 
   const dismissKeyboard = () => {
     Keyboard.dismiss();
   };
+
+  const handleCheckScam = () => {};
 
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard}>
@@ -37,6 +78,15 @@ export default ScamCheckScreen = () => {
           value={text}
         />
         <Button title="Check Scam" onPress={handleCheckScam} />
+        {Platform.OS === "android" && (
+          <TextInput
+            style={styles.input}
+            placeholder="SMS Content"
+            multiline
+            onChangeText={(value) => {requestSMSPermission}}
+            value={smsContent}
+          />
+        )}
       </View>
     </TouchableWithoutFeedback>
   );
