@@ -8,7 +8,7 @@ import {
   Dimensions,
 } from "react-native";
 
-import { useAppContext } from "../utils/AppContext.js"; // Adjust the path as necessary
+import { useAppContext } from "../utils/AppContext"; // Adjust the path as necessary
 import { useNavigation } from "@react-navigation/native";
 const { width } = Dimensions.get("window");
 const dynamicPadding = width * 0.05; // 5% of screen width
@@ -17,7 +17,7 @@ export default SettingsScreen = () => {
   const [responseType, setResponseType] = useState("manual");
   const { appData } = useAppContext();
   const navigation = useNavigation();
-  
+
   const RadioButton = ({ selected, onPress, label }) => (
     <TouchableOpacity style={styles.radioButtonContainer} onPress={onPress}>
       <View
