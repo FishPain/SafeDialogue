@@ -1,102 +1,98 @@
 import { useEffect, useState } from "react";
-import { PermissionsAndroid } from "react-native";
+import { PermissionsAndroid, NativeModules } from "react-native";
 
-import {
-  requestReadSMSPermission,
-  startReadSMS,
-} from "@maniac-tech/react-native-expo-read-sms";
+const SmsModule = NativeModules.SmsModule;
 
-const useApp = () => {
-  const [appState, setAppState] = useState(null);
-  const [hasReceiveSMSPermission, setHasReceiveSMSPermission] = useState(null);
-  const [hasReadSMSPermission, setHasReadSMSPermission] = useState(null);
-  const [smsPermissionState, setSmsPermissionState] = useState(null);
-  const [successCallbackStatus, setSuccessCallbackStatus] = useState(null);
-  const [errorCallbackStatus, setErrorCallbackStatus] = useState(null);
-  const [smsMessageData, setSmsMessageData] = useState(null);
-  const [smsMessageNumber, setSmsMessageNumber] = useState(null);
-  const [smsMessageBody, setSmsMessageBody] = useState(null);
-  const [smsError, setSMSError] = useState(null);
+const requestSMSPermission = async () => {
+  let permissionsGranted = false;
 
-  const buttonClickHandler = () => {
-    startReadSMS(callbackFn1, callbackFn2);
-  };
+  const hasReceiveSMSPermission = await PermissionsAndroid.check(
+    PermissionsAndroid.PERMISSIONS.RECEIVE_SMS
+  );
+  const hasReadSMSPermission = await PermissionsAndroid.check(
+    PermissionsAndroid.PERMISSIONS.READ_SMS
+  );
 
-  const callbackFn1 = (status, sms, error) => {
-    setSmsPermissionState("Success Callback!");
-
-    if (status === "Start Read SMS successfully") {
-      setSuccessCallbackStatus("Start Read SMS successfully");
-      setSmsMessageData(sms);
-    } else if (status === "success") {
-      setSuccessCallbackStatus("just success");
-      setSmsMessageData(sms);
-    } else {
-      setSuccessCallbackStatus("Error in success callback");
-      setSMSError(error);
-    }
-  };
-
-  const callbackFn2 = (status, sms, error) => {
-    setSmsPermissionState("Error Callback!");
-    setErrorCallbackStatus("Start Read SMS failed");
-  };
-
-  const checkPermissions = async () => {
-    const customHasReceiveSMSPermission = await PermissionsAndroid.check(
-      PermissionsAndroid.PERMISSIONS.RECEIVE_SMS
+  if (!hasReceiveSMSPermission) {
+    const receivePermissionGranted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.READ_SMS,
+      {
+        title: "SMS Permission",
+        message: "This app needs access to your SMS to detect scams.",
+        buttonNeutral: "Ask Me Later",
+        buttonNegative: "Cancel",
+        buttonPositive: "OK",
+      }
     );
-    const customHasReadSMSPermission = await PermissionsAndroid.check(
-      PermissionsAndroid.PERMISSIONS.READ_SMS
+    permissionsGranted =
+      receivePermissionGranted == PermissionsAndroid.RESULTS.GRANTED;
+  }
+
+  if (!hasReadSMSPermission && permissionsGranted) {
+    const readPermissionGranted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.READ_SMS,
+      {
+        title: "Read SMS Permission",
+        message: "This app needs access to read your SMS for scam detection.",
+        buttonNeutral: "Ask Me Later",
+        buttonNegative: "Cancel",
+        buttonPositive: "OK",
+      }
     );
+    permissionsGranted =
+      readPermissionGranted === PermissionsAndroid.RESULTS.GRANTED;
+  }
 
-    setHasReceiveSMSPermission(customHasReceiveSMSPermission);
-    setHasReadSMSPermission(customHasReadSMSPermission);
-    setAppState("Permission check complete");
-  };
-
-  useEffect(() => {
-    const tempArray = smsMessageData
-      ?.substring("1", smsMessageData.length - 1)
-      .split(",");
-
-    if (smsMessageData) {
-      const messageOriginatingAdd = tempArray[0];
-      const messageBody = tempArray[1];
-
-      setSmsMessageBody(messageBody);
-      setSmsMessageNumber(messageOriginatingAdd);
-    } else {
-      setSmsMessageBody(null);
-      setSmsMessageNumber(null);
-    }
-  }, [smsMessageData]);
-
-  useEffect(() => {
-    console.log("requestReadSMSPermission:", requestReadSMSPermission);
-    setAppState("init");
-    checkPermissions();
-  }, []);
-
-  useEffect(() => {
-    if (hasReceiveSMSPermission && hasReadSMSPermission) {
-    }
-  }, [hasReceiveSMSPermission, hasReadSMSPermission]);
-
-  return {
-    appState,
-    buttonClickHandler,
-    checkPermissions,
-    errorCallbackStatus,
-    hasReceiveSMSPermission,
-    hasReadSMSPermission,
-    requestReadSMSPermission,
-    smsPermissionState,
-    successCallbackStatus,
-    smsMessageBody,
-    smsMessageNumber,
-    smsError,
-  };
+  return permissionsGranted;
 };
 
-export default useApp;
+const readSMS = async () => {
+  var filter = {
+    box: "inbox", // 'inbox' (default), 'sent', 'draft', 'outbox', 'failed', 'queued', and '' for all
+
+    /**
+     *  the next 3 filters can work together, they are AND-ed
+     *
+     *  minDate, maxDate filters work like this:
+     *    - If and only if you set a maxDate, it's like executing this SQL query:
+     *    "SELECT * from messages WHERE (other filters) AND date <= maxDate"
+     *    - Same for minDate but with "date >= minDate"
+     */
+    // minDate: 1554636310165, // timestamp (in milliseconds since UNIX epoch)
+    // maxDate: 1556277910456, // timestamp (in milliseconds since UNIX epoch)
+    // bodyRegex: "*", // content regex to match
+
+    /** the next 5 filters should NOT be used together, they are OR-ed so pick one **/
+    // read: 0, // 0 for unread SMS, 1 for SMS already read
+    // _id: 1234, // specify the msg id
+    // thread_id: 12, // specify the conversation thread_id
+    // address: "+1888------", // sender's phone number
+    // body: "How are you", // content to match
+    // /** the next 2 filters can be used for pagination **/
+    // indexFrom: 0, // start from index 0
+    // maxCount: 10, // count of SMS to return each time
+  };
+  try {
+    SmsModule.list(
+      JSON.stringify(filter),
+      (fail) => {
+        console.log("Failed with this error: " + fail);
+      },
+      (count, smsList) => {
+        console.log("Count: ", count);
+        console.log("List: ", smsList);
+        var arr = JSON.parse(smsList);
+
+        arr.forEach(function (object) {
+          console.log("Object: " + object);
+          console.log("-->" + object.date);
+          console.log("-->" + object.body);
+        });
+      }
+    );
+  } catch (error) {
+    console.log("err", JSON.stringify(error));
+  }
+};
+
+export { requestSMSPermission, readSMS };
