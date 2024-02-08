@@ -1,4 +1,4 @@
-package com.anonymous.SafeDialogue
+package com.SafeDialogue
 
 import android.os.Build
 import android.os.Bundle

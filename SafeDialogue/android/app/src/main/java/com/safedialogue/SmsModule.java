@@ -1,4 +1,4 @@
-package com.anonymous.SafeDialogue;
+package com.SafeDialogue;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Callback;
@@ -59,7 +59,7 @@ public class SmsModule extends ReactContextBaseJavaModule /* implements LoaderMa
 
     @Override
     public String getName() {
-        return "Sms";
+        return "SmsModule";
     }
 
     @ReactMethod

@@ -16,6 +16,7 @@ import {
 
 const { width } = Dimensions.get("window");
 const dynamicPadding = width * 0.05; // 5% of screen width
+const SmsModule = NativeModules.SmsModule;
 
 const ScamCheckScreen = () => {
   const [text, setText] = useState("");
@@ -51,7 +52,6 @@ const ScamCheckScreen = () => {
       permissionsGranted =
         receivePermissionGranted == PermissionsAndroid.RESULTS.GRANTED;
     }
-    console.log("receivePermissionGranted", permissionsGranted);
 
     if (!hasReadSMSPermission && permissionsGranted) {
       const readPermissionGranted = await PermissionsAndroid.request(
@@ -106,7 +106,7 @@ const ScamCheckScreen = () => {
       // maxCount: 10, // count of SMS to return each time
     };
     try {
-      NativeModules.SmsModule.list(
+      SmsModule.list(
         JSON.stringify(filter),
         (fail) => {
           console.log("Failed with this error: " + fail);
